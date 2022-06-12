@@ -48,8 +48,8 @@ class Pong:
     def display_seven_segment(self, posx, posy, val):
         valores_segmentos = {0:"abcdef", 1:"bc", 2:"abged", 3:"abgcd", 4:"fgbc", 5:"afgcd", 6:"afgedc", 7: "abc", 8:"abcdefg", 9:"abcdfg"}
         codificado = valores_segmentos[val]
-        HOR_WIDTH = 40
-        HOR_HEIGHT = 8
+        HOR_WIDTH = 25
+        HOR_HEIGHT = 10
 
         VER_WIDTH = HOR_HEIGHT
         VER_HEIGHT = HOR_WIDTH
@@ -80,7 +80,8 @@ class Pong:
         while True:
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j1)
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j2)
-            self.display_seven_segment(200, 10, 9)
+            self.display_seven_segment(200, 20, 0)
+            self.display_seven_segment(self._ANCHO-200, 20, 0)
 
             pygame.display.flip()
 
