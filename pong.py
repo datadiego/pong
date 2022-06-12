@@ -5,7 +5,7 @@ class Paleta(pygame.Rect):
 
 class Pong:
     _ANCHO = 800
-    _ALTO = 420
+    _ALTO = 400
     
     _MARGEN_LATERAL = (_ALTO/6)/2
     
@@ -15,8 +15,6 @@ class Pong:
     _ALTO_RED = int(_ALTO/14)
     _ANCHO_RED = _ANCHO_PALETA/2
 
-    _ANCHO_SEGMENTO = 50
-    _ALTO_SEGMENTO = 8
     def __init__(self):
         pygame.init()
         self.pantalla = pygame.display.set_mode((self._ANCHO, self._ALTO))
