@@ -12,9 +12,10 @@ class Pong:
     _ANCHO_PALETA = 12
     _ALTO_PALETA = _ALTO / 5
 
-    _ALTO_RED = int(_ALTO/14)
+    _ALTO_RED = int(_ALTO/12)
     _ANCHO_RED = _ANCHO_PALETA/2
 
+    _CRT = True
     def __init__(self):
         pygame.init()
         self.pantalla = pygame.display.set_mode((self._ANCHO, self._ALTO))
@@ -73,14 +74,20 @@ class Pong:
             if segmento == "g":
                 self.g = pygame.Rect(posx, posy+VER_HEIGHT-(VER_WIDTH/2), HOR_WIDTH, HOR_HEIGHT)
                 pygame.draw.rect(self.pantalla, (255, 255, 255), self.g)
+    def CRT_filter(self):
+        if self._CRT:
+            for y in range(0, self._ALTO, 2):
+                pygame.draw.line(self.pantalla, (0,0,0), [0,y], [self._ANCHO, y])
+        else:
+            pass
 
     def bucle_principal(self):
         while True:
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j1)
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j2)
-            self.display_seven_segment(200, 20, 0)
-            self.display_seven_segment(self._ANCHO-200, 20, 0)
-
+            self.display_seven_segment(200, 20, 5)
+            self.display_seven_segment(self._ANCHO-200, 20, 6)
+            self.CRT_filter()
             pygame.display.flip()
 
 if __name__ == "__main__":
