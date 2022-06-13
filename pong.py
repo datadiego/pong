@@ -76,13 +76,20 @@ class Pong:
                 pygame.draw.rect(self.pantalla, (255, 255, 255), self.g)
     def CRT_filter(self):
         if self._CRT:
-            for y in range(0, self._ALTO, 2):
+            for y in range(1, self._ALTO, 2):
                 pygame.draw.line(self.pantalla, (0,0,0), [0,y], [self._ANCHO, y])
         else:
             pass
 
     def bucle_principal(self):
-        while True:
+        salir = False
+        while not salir:
+            for evento in pygame.event.get():
+                if evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_ESCAPE:
+                        salir = True
+                if evento.type == pygame.QUIT:
+                    salir = True
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j1)
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j2)
             self.display_seven_segment(200, 20, 5)
