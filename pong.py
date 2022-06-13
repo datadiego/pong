@@ -10,7 +10,7 @@ class Paleta(pygame.Rect):
 
     def __init__(self, x, y):
         super(Paleta, self).__init__(x, y, ANCHO_PALETA, ALTO_PALETA)
-        self.velocidad = 1
+        self.velocidad = 5
         #super(Paleta, self) equivale a Rect
         #.__init__(x, y, ANCHO_PALETA, ALTO_PALETA) llama al metodo init de Rect, coge los dos valores de posicion que entran al crear Paleta, y luego metemos las dos constantes globales que hemos creado al principio
     def mover(self, dir):
@@ -38,7 +38,7 @@ class Pong:
     def __init__(self):
         pygame.init()
         self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
-
+        self.clock = pygame.time.Clock()
         self.j1 = Paleta(MARGEN_LATERAL, (ALTO - ALTO_PALETA)/2)
 
         self.j2 = Paleta(ANCHO-ANCHO_PALETA-MARGEN_LATERAL, (ALTO - ALTO_PALETA)/2)
@@ -111,7 +111,9 @@ class Pong:
             self.display_seven_segment(200, 20, 5)
             self.display_seven_segment(ANCHO-200, 20, 6)
             self.CRT_filter()
+            
             pygame.display.flip()
+            self.clock.tick(60)
 
 if __name__ == "__main__":
     juego = Pong()
