@@ -1,9 +1,13 @@
+from random import randint
 import pygame
 ANCHO_PALETA = 10
 ALTO_PALETA = 100
+SIZE_BALL = 15
 ANCHO = 800
 ALTO = 400
 MARGEN_LATERAL = (ALTO/6)/2
+PUNTOS_J1 = 0
+PUNTOS_J2 = 0
 class Paleta(pygame.Rect):
     ARRIBA = True
     ABAJO = False
@@ -25,9 +29,29 @@ class Paleta(pygame.Rect):
             self.y += self.velocidad
             if self.y > ALTO-ALTO_PALETA:
                 self.y = ALTO - ALTO_PALETA
+
+class Pelota(pygame.Rect):
+    def __init__(self):
+        super(Pelota, self).__init__((ANCHO-SIZE_BALL)/2+1, (ALTO-SIZE_BALL)/2, SIZE_BALL, SIZE_BALL)
+        self.velocidad_x = randint(-5, 5)
+        self.velocidad_y = randint(-5, 5)
+        self.PUNTOS_J1 = 0
+        self.PUNTOS_J2 = 0
+    def mover(self):
+        self.y += self.velocidad_y
+        self.x += self.velocidad_x
+        if self.x > ANCHO:
+            self.velocidad_x *= -1
+            self.PUNTOS_J1 += 1
+        if self.x < 0:
+            self.velocidad_x *= -1
+            self.PUNTOS_J2 += 1
+        if self.y < 0:
+            self.velocidad_y *= -1
+        if self.y > ALTO-SIZE_BALL:
+            self.velocidad_y *= -1
+
 class Pong:
-    
-    
     _ANCHO_PALETA = 12
     _ALTO_PALETA = ALTO / 5
 
@@ -40,10 +64,9 @@ class Pong:
         self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
         self.clock = pygame.time.Clock()
         self.j1 = Paleta(MARGEN_LATERAL, (ALTO - ALTO_PALETA)/2)
-
         self.j2 = Paleta(ANCHO-ANCHO_PALETA-MARGEN_LATERAL, (ALTO - ALTO_PALETA)/2)
-
-        self.crear_red()
+        self.ball = Pelota()
+        
         
     def crear_red(self):
         for y in range(int(self._ALTO_RED/2), ALTO, self._ALTO_RED*2):
@@ -96,6 +119,7 @@ class Pong:
                         salir = True   
                 if evento.type == pygame.QUIT:
                     salir = True
+
             estado_teclas = pygame.key.get_pressed()
             if estado_teclas[pygame.K_w]:
                 self.j1.mover(Paleta.ARRIBA)
@@ -105,11 +129,15 @@ class Pong:
                 self.j2.mover(Paleta.ARRIBA)
             if estado_teclas[pygame.K_DOWN]:
                 self.j2.mover(Paleta.ABAJO)
+
             self.pantalla.fill((0,0,0))
+            self.crear_red()
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j1)
             pygame.draw.rect(self.pantalla, (255, 255, 255), self.j2)
-            self.display_seven_segment(200, 20, 5)
-            self.display_seven_segment(ANCHO-200, 20, 6)
+            self.display_seven_segment(200, 20, self.ball.PUNTOS_J1)
+            self.display_seven_segment(ANCHO-200, 20, self.ball.PUNTOS_J2)
+            pygame.draw.rect(self.pantalla, (255, 255, 255), self.ball)
+            self.ball.mover()
             self.CRT_filter()
             
             pygame.display.flip()
