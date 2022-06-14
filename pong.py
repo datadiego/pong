@@ -8,6 +8,9 @@ ALTO = 400
 MARGEN_LATERAL = (ALTO/6)/2
 PUNTOS_J1 = 0
 PUNTOS_J2 = 0
+BLANCO = (255,255,255)
+NEGRO = (0,0,0)
+VEL_MAX_PELOTA = 5
 class Paleta(pygame.Rect):
     ARRIBA = True
     ABAJO = False
@@ -33,12 +36,10 @@ class Paleta(pygame.Rect):
 class Pelota(pygame.Rect):
     def __init__(self):
         super(Pelota, self).__init__((ANCHO-SIZE_BALL)/2+1, (ALTO-SIZE_BALL)/2, SIZE_BALL, SIZE_BALL)
-        self.velocidad_x = randint(-5, 5)
-        self.velocidad_y = randint(-5, 5)
+        self.velocidad_x = randint(-VEL_MAX_PELOTA, VEL_MAX_PELOTA)
+        self.velocidad_y = randint(-VEL_MAX_PELOTA, VEL_MAX_PELOTA)
         while self.velocidad_x == 0:
-            self.velocidad_x = randint(-5,5)
-        while self.velocidad_y == 0:
-            self.velocidad_y = randint(-5,5)
+            self.velocidad_x = randint(-VEL_MAX_PELOTA, VEL_MAX_PELOTA)
         self.PUNTOS_J1 = 0
         self.PUNTOS_J2 = 0
     def mover(self):
@@ -55,8 +56,10 @@ class Pelota(pygame.Rect):
             self.velocidad_x *= -1
             self.PUNTOS_J2 += 1
         if self.y < 0:
+            self.y = 0
             self.velocidad_y *= -1
         if self.y > ALTO-SIZE_BALL:
+            self.y = ALTO-SIZE_BALL
             self.velocidad_y *= -1
             
 
@@ -67,7 +70,7 @@ class Pong:
     _ALTO_RED = int(ALTO/12)
     _ANCHO_RED = _ANCHO_PALETA/2
 
-    _CRT = False
+    _CRT = True
 
     def __init__(self):
         pygame.init()
@@ -81,7 +84,7 @@ class Pong:
     def crear_red(self):
         for y in range(int(self._ALTO_RED/2), ALTO, self._ALTO_RED*2):
             parte_red = pygame.Rect(ANCHO/2-2, y, self._ANCHO_RED, self._ALTO_RED)
-            pygame.draw.rect(self.pantalla, (255, 255, 255), parte_red)
+            pygame.draw.rect(self.pantalla, BLANCO, parte_red)
         
     def display_seven_segment(self, posx, posy, val):
         valores_segmentos = {0:"abcdef", 1:"bc", 2:"abged", 3:"abgcd", 4:"fgbc", 5:"afgcd", 6:"afgedc", 7: "abc", 8:"abcdefg", 9:"abcdfg"}
@@ -94,25 +97,25 @@ class Pong:
         for segmento in codificado:
             if segmento == "a":
                 self.a = pygame.Rect(posx, posy, HOR_WIDTH, HOR_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.a)
+                pygame.draw.rect(self.pantalla, BLANCO, self.a)
             if segmento == "b":
                 self.b = pygame.Rect(posx+HOR_WIDTH-HOR_HEIGHT, posy, VER_WIDTH, VER_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.b)
+                pygame.draw.rect(self.pantalla, BLANCO, self.b)
             if segmento == "c":
                 self.c = pygame.Rect(posx+HOR_WIDTH-HOR_HEIGHT, posy+VER_HEIGHT, VER_WIDTH, VER_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.c)
+                pygame.draw.rect(self.pantalla, BLANCO, self.c)
             if segmento == "d":
                 self.d = pygame.Rect(posx, posy+VER_HEIGHT*2-VER_WIDTH, HOR_WIDTH, HOR_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.d)
+                pygame.draw.rect(self.pantalla, BLANCO, self.d)
             if segmento == "e":
                 self.e = pygame.Rect(posx, posy+VER_HEIGHT, VER_WIDTH, VER_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.e)
+                pygame.draw.rect(self.pantalla, BLANCO, self.e)
             if segmento == "f":
                 self.f = pygame.Rect(posx, posy, VER_WIDTH, VER_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.f)
+                pygame.draw.rect(self.pantalla, BLANCO, self.f)
             if segmento == "g":
                 self.g = pygame.Rect(posx, posy+VER_HEIGHT-(VER_WIDTH/2), HOR_WIDTH, HOR_HEIGHT)
-                pygame.draw.rect(self.pantalla, (255, 255, 255), self.g)
+                pygame.draw.rect(self.pantalla, BLANCO, self.g)
     def CRT_filter(self):
         if self._CRT:
             for y in range(1, ALTO, 2):
@@ -142,17 +145,25 @@ class Pong:
 
             self.pantalla.fill((0,0,0))
             self.crear_red()
-            pygame.draw.rect(self.pantalla, (255, 255, 255), self.j1)
-            pygame.draw.rect(self.pantalla, (255, 255, 255), self.j2)
+            pygame.draw.rect(self.pantalla, BLANCO, self.j1)
+            pygame.draw.rect(self.pantalla, BLANCO, self.j2)
             self.display_seven_segment(200, 20, self.ball.PUNTOS_J1)
             self.display_seven_segment(ANCHO-200, 20, self.ball.PUNTOS_J2)
-            pygame.draw.rect(self.pantalla, (255, 255, 255), self.ball)
+            pygame.draw.rect(self.pantalla, BLANCO, self.ball)
             self.ball.mover()
+            self.colision_paletas()
             self.CRT_filter()
             
             pygame.display.flip()
             self.clock.tick(60)
+    def colision_paletas(self):
+        #pygame.Rect.colliderect
+        if self.j1.colliderect(self.ball) or self.j2.colliderect(self.ball):
+            self.ball.velocidad_x *= -1
+            self.ball.velocidad_y = randint(-VEL_MAX_PELOTA, VEL_MAX_PELOTA)
 
+            if self.ball.velocidad_x > VEL_MAX_PELOTA:
+                self.ball.velocidad_x = randint(-VEL_MAX_PELOTA, VEL_MAX_PELOTA)
 if __name__ == "__main__":
     juego = Pong()
     juego.bucle_principal()
