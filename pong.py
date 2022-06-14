@@ -35,21 +35,30 @@ class Pelota(pygame.Rect):
         super(Pelota, self).__init__((ANCHO-SIZE_BALL)/2+1, (ALTO-SIZE_BALL)/2, SIZE_BALL, SIZE_BALL)
         self.velocidad_x = randint(-5, 5)
         self.velocidad_y = randint(-5, 5)
+        while self.velocidad_x == 0:
+            self.velocidad_x = randint(-5,5)
+        while self.velocidad_y == 0:
+            self.velocidad_y = randint(-5,5)
         self.PUNTOS_J1 = 0
         self.PUNTOS_J2 = 0
     def mover(self):
         self.y += self.velocidad_y
         self.x += self.velocidad_x
         if self.x > ANCHO:
+            self.x = ANCHO/2
+            self.y = ALTO/2
             self.velocidad_x *= -1
             self.PUNTOS_J1 += 1
         if self.x < 0:
+            self.x = ANCHO/2
+            self.y = ALTO/2
             self.velocidad_x *= -1
             self.PUNTOS_J2 += 1
         if self.y < 0:
             self.velocidad_y *= -1
         if self.y > ALTO-SIZE_BALL:
             self.velocidad_y *= -1
+            
 
 class Pong:
     _ANCHO_PALETA = 12
@@ -58,7 +67,8 @@ class Pong:
     _ALTO_RED = int(ALTO/12)
     _ANCHO_RED = _ANCHO_PALETA/2
 
-    _CRT = True
+    _CRT = False
+
     def __init__(self):
         pygame.init()
         self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
@@ -106,7 +116,7 @@ class Pong:
     def CRT_filter(self):
         if self._CRT:
             for y in range(1, ALTO, 2):
-                pygame.draw.line(self.pantalla, (0,0,0), [0,y], [ANCHO, y])
+                pygame.draw.line(self.pantalla, (0,0,0, 200), [0,y], [ANCHO, y])
         else:
             pass
 
