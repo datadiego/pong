@@ -48,11 +48,14 @@ class Pelota(pygame.Rect):
         if self.x > ANCHO:
             self.x = ANCHO/2
             self.y = ALTO/2
+            #self.velocidad_x = randint(1, VEL_MAX_PELOTA)
             self.velocidad_x *= -1
             self.PUNTOS_J1 += 1
         if self.x < 0:
             self.x = ANCHO/2
             self.y = ALTO/2
+
+            #self.velocidad_x = randint(-VEL_MAX_PELOTA, -1)
             self.velocidad_x *= -1
             self.PUNTOS_J2 += 1
         if self.y < 0:
@@ -61,7 +64,8 @@ class Pelota(pygame.Rect):
         if self.y > ALTO-SIZE_BALL:
             self.y = ALTO-SIZE_BALL
             self.velocidad_y *= -1
-            
+    def comprobar_punto(self):
+        pass 
 
 class Pong:
     _ANCHO_PALETA = 12
@@ -89,6 +93,7 @@ class Pong:
     def display_seven_segment(self, posx, posy, val):
         valores_segmentos = {0:"abcdef", 1:"bc", 2:"abged", 3:"abgcd", 4:"fgbc", 5:"afgcd", 6:"afgedc", 7: "abc", 8:"abcdefg", 9:"abcdfg"}
         codificado = valores_segmentos[val]
+
         HOR_WIDTH = 25
         HOR_HEIGHT = 10
 
@@ -116,6 +121,7 @@ class Pong:
             if segmento == "g":
                 self.g = pygame.Rect(posx, posy+VER_HEIGHT-(VER_WIDTH/2), HOR_WIDTH, HOR_HEIGHT)
                 pygame.draw.rect(self.pantalla, BLANCO, self.g)
+    
     def CRT_filter(self):
         if self._CRT:
             for y in range(1, ALTO, 2):
